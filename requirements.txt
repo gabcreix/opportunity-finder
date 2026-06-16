@@ -1,5 +1,5 @@
 # Ingestion layer (v1)
-requests>=2.31
+httpx[http2]>=0.27
 pyarrow>=14.0
 duckdb>=0.10
 lingua-language-detector>=2.0  # ES/EN detection; more accurate than langdetect on short texts

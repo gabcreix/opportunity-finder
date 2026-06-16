@@ -2,13 +2,13 @@ import time
 from collections.abc import Iterator
 from datetime import datetime, timezone
 
-import requests
-from lingua import IsoCode639_1, Language, LanguageDetectorBuilder
+import httpx
+from lingua import Language, LanguageDetectorBuilder
 
 from opportunity_finder.connectors.base import ConnectorBase
 from opportunity_finder.models import RawItem
 
-_BASE_URL = "https://old.reddit.com/r/{subreddit}/new.json"
+_BASE_URL = "https://www.reddit.com/r/{subreddit}/new.json"
 _MIN_LANG_CHARS = 20
 _REQUEST_INTERVAL = 6.5   # ~9 req/min — stays comfortably under the ~10 limit
 _MAX_RETRIES = 3
@@ -31,9 +31,13 @@ class RedditJsonConnector(ConnectorBase):
 
     source = "reddit"
 
-    def __init__(self, user_agent: str = "opportunity-finder/0.1 (personal research)"):
-        self._session = requests.Session()
-        self._session.headers["User-Agent"] = user_agent
+    def __init__(self, user_agent: str = "social-amplifier/0.1"):
+        self._client = httpx.Client(
+            headers={"User-Agent": user_agent},
+            http2=True,
+            follow_redirects=True,
+            timeout=15,
+        )
         self._last_request_ts: float = 0.0
 
     def fetch(self, subreddit: str, limit: int = 100) -> Iterator[RawItem]:
@@ -109,7 +113,7 @@ class RedditJsonConnector(ConnectorBase):
         for attempt in range(_MAX_RETRIES):
             self._throttle()
             try:
-                resp = self._session.get(url, params=params, timeout=15)
+                resp = self._client.get(url, params=params)
                 self._last_request_ts = time.monotonic()
 
                 if resp.status_code == 429:
@@ -124,7 +128,7 @@ class RedditJsonConnector(ConnectorBase):
                 resp.raise_for_status()
                 return resp.json()
 
-            except requests.RequestException as exc:
+            except httpx.HTTPError as exc:
                 if attempt == _MAX_RETRIES - 1:
                     raise
                 wait = 2 ** attempt
