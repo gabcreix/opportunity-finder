@@ -1,0 +1,15 @@
+# Ingestion layer (v1)
+requests>=2.31
+pyarrow>=14.0
+duckdb>=0.10
+lingua-language-detector>=2.0  # ES/EN detection; more accurate than langdetect on short texts
+python-dotenv>=1.0
+pandas>=2.0     # needed by duckdb .fetchdf()
+numpy>=1.26
+
+# Filter + embeddings (next step — uncomment when ready)
+# sentence-transformers>=2.6
+# lancedb>=0.6
+
+# LLM extraction (step 2 — uncomment when ready)
+# anthropic>=0.30

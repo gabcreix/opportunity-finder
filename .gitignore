@@ -1,0 +1,14 @@
+.env
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+*.duckdb
+*.duckdb.wal
+data/raw/*
+!data/raw/.gitkeep
+data/processed/
