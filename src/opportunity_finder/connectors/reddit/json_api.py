@@ -8,7 +8,7 @@ from lingua import IsoCode639_1, Language, LanguageDetectorBuilder
 from opportunity_finder.connectors.base import ConnectorBase
 from opportunity_finder.models import RawItem
 
-_BASE_URL = "https://www.reddit.com/r/{subreddit}/new.json"
+_BASE_URL = "https://old.reddit.com/r/{subreddit}/new.json"
 _MIN_LANG_CHARS = 20
 _REQUEST_INTERVAL = 6.5   # ~9 req/min — stays comfortably under the ~10 limit
 _MAX_RETRIES = 3
