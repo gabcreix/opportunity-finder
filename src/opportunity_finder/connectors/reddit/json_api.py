@@ -118,6 +118,9 @@ class RedditJsonConnector(ConnectorBase):
                     time.sleep(wait)
                     continue
 
+                if resp.status_code == 403:
+                    print(f"  [403 body] {resp.text[:300]}")
+
                 resp.raise_for_status()
                 return resp.json()
 
